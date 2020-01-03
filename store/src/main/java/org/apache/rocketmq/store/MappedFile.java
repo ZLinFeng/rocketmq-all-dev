@@ -42,28 +42,50 @@ import org.slf4j.LoggerFactory;
 import sun.nio.ch.DirectBuffer;
 
 public class MappedFile extends ReferenceResource {
+
+    //默认页大小为4k
     public static final int OS_PAGE_SIZE = 1024 * 4;
     protected static final Logger log = LoggerFactory.getLogger(LoggerName.STORE_LOGGER_NAME);
 
+    //JVM中映射的虚拟内存总大小
     private static final AtomicLong TOTAL_MAPPED_VIRTUAL_MEMORY = new AtomicLong(0);
 
+    //JVM中mmap的数量
     private static final AtomicInteger TOTAL_MAPPED_FILES = new AtomicInteger(0);
+
+    //当前写文件的位置
     protected final AtomicInteger wrotePosition = new AtomicInteger(0);
-    //ADD BY ChenYang
+
     protected final AtomicInteger committedPosition = new AtomicInteger(0);
     private final AtomicInteger flushedPosition = new AtomicInteger(0);
+
+    //映射文件的大小
     protected int fileSize;
+
+    //映射的fileChannel对象
     protected FileChannel fileChannel;
     /**
      * Message will put to here first, and then reput to FileChannel if writeBuffer is not null.
      */
     protected ByteBuffer writeBuffer = null;
     protected TransientStorePool transientStorePool = null;
+
+    //映射的文件名
     private String fileName;
+
+    //映射的起始偏移量
     private long fileFromOffset;
+
+    //映射的文件
     private File file;
+
+    //映射的内存对象
     private MappedByteBuffer mappedByteBuffer;
+
+    //最后一条消息保存时间
     private volatile long storeTimestamp = 0;
+
+    //是不是刚刚创建的
     private boolean firstCreateInQueue = false;
 
     public MappedFile() {
