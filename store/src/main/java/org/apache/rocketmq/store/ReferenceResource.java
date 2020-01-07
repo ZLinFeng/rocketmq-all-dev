@@ -19,7 +19,7 @@ package org.apache.rocketmq.store;
 import java.util.concurrent.atomic.AtomicLong;
 
 public abstract class ReferenceResource {
-    //记录MappedFile中的引用次数，为正表示资源可用，刷盘前加一，然后将wrotePosotion的值赋给committedPosition，再减一
+    //记录MappedFile中的引用次数，为正表示资源可用，刷盘前加一，然后将wrotePosition的值赋给committedPosition，再减一
 
     protected final AtomicLong refCount = new AtomicLong(1);
     protected volatile boolean available = true;

@@ -63,30 +63,42 @@ import static org.apache.rocketmq.store.config.BrokerRole.SLAVE;
 public class DefaultMessageStore implements MessageStore {
     private static final Logger log = LoggerFactory.getLogger(LoggerName.STORE_LOGGER_NAME);
 
+    // 消息存储的配置属性
     private final MessageStoreConfig messageStoreConfig;
-    // CommitLog
+
+    // CommitLog 文件存储实现类
     private final CommitLog commitLog;
 
+    // 消息队列存储的缓存表, 按照消息主题分组
     private final ConcurrentMap<String/* topic */, ConcurrentMap<Integer/* queueId */, ConsumeQueue>> consumeQueueTable;
 
+    // 消息队列文件的刷盘线程
     private final FlushConsumeQueueService flushConsumeQueueService;
 
+    // 清除CommitLog文件服务
     private final CleanCommitLogService cleanCommitLogService;
 
+    // 清除ConsumeQueue文件服务
     private final CleanConsumeQueueService cleanConsumeQueueService;
 
+    // 索引文件实现类
     private final IndexService indexService;
 
+    // MappedFile 分配服务
     private final AllocateMappedFileService allocateMappedFileService;
 
+    // CommitLog消息分发，根据CommitLog文件创建ConsumeQueue和IndexFile
     private final ReputMessageService reputMessageService;
 
+    // 存储HA机制
     private final HAService haService;
+
 
     private final ScheduleMessageService scheduleMessageService;
 
     private final StoreStatsService storeStatsService;
 
+    // 消息堆内存缓存
     private final TransientStorePool transientStorePool;
 
     private final RunningFlags runningFlags = new RunningFlags();
@@ -95,15 +107,21 @@ public class DefaultMessageStore implements MessageStore {
     private final ScheduledExecutorService scheduledExecutorService =
         Executors.newSingleThreadScheduledExecutor(new ThreadFactoryImpl("StoreScheduledThread"));
     private final BrokerStatsManager brokerStatsManager;
+
+    // 消息到达监听器
     private final MessageArrivingListener messageArrivingListener;
+
+    // Broker配置属性
     private final BrokerConfig brokerConfig;
 
     private volatile boolean shutdown = true;
 
+    // 文件刷盘的检查点
     private StoreCheckpoint storeCheckpoint;
 
     private AtomicLong printTimes = new AtomicLong(0);
 
+    // CommitLog文件转发请求
     private final LinkedList<CommitLogDispatcher> dispatcherList;
 
     private RandomAccessFile lockFile;

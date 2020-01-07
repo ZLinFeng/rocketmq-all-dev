@@ -172,6 +172,7 @@ public class AllocateMappedFileService extends ServiceThread {
 
                 MappedFile mappedFile;
                 if (messageStore.getMessageStoreConfig().isTransientStorePoolEnable()) {
+                    //为true使用ByteBuffer
                     try {
                         mappedFile = ServiceLoader.load(MappedFile.class).iterator().next();
                         mappedFile.init(req.getFilePath(), req.getFileSize(), messageStore.getTransientStorePool());
